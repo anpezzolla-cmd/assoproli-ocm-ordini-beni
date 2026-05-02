@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assoproli Bari – Email Ordini OCM 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #f5f0e8; --surface: #fffdf8; --border: #d4c9b0;
+    --accent: #2d5a1b; --accent-light: #e8f0e3; --accent-mid: #4a7c35;
+    --text: #1a1a14; --muted: #7a7060;
+    --warning: #92400e; --warning-bg: #fef3c7;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { font-size: 16px; }
+  body { font-family: 'EB Garamond', Georgia, serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* ── HEADER ── */
+  header { background: var(--accent); color: #fff; padding: 16px 20px; position: relative; }
+  header .logo { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; font-family: 'DM Mono', monospace; margin-bottom: 2px; }
+  header h1 { font-size: 20px; font-weight: 600; }
+  header .subtitle { font-family: 'DM Mono', monospace; font-size: 10px; opacity: 0.7; margin-top: 4px; }
+  .btn-logout { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 6px 14px; border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; cursor: pointer; background: transparent; color: rgba(255,255,255,0.85); position: absolute; top: 16px; right: 16px; }
+
+  /* ── NAV TABS ── */
+  .main-nav { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .main-nav::-webkit-scrollbar { display: none; }
+  .nav-btn { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 13px 18px; border: none; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── CONTAINER ── */
+  .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  @media (min-width: 600px) { .container { padding: 24px; } }
+  @media (min-width: 900px) { .container { padding: 32px 24px; } }
+
+  /* ── GRIDS ── */
+  .upload-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 14px; }
+  @media (min-width: 600px) { .upload-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 900px) { .upload-grid { grid-template-columns: 1fr 1fr 1fr; } }
+
+  .file-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .file-block .fb-title { font-family: 'DM Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); }
+  .file-block .fb-status { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.6; }
+  .file-block .fb-status.loaded { color: var(--accent); }
+
+  /* ── BUTTONS ── */
+  .btn-upload { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 9px 16px; border: 1px solid var(--accent); border-radius: 4px; cursor: pointer; background: transparent; color: var(--accent); transition: all 0.15s; align-self: flex-start; min-height: 40px; }
+  .btn-upload:hover { background: var(--accent-light); }
+  button { touch-action: manipulation; }
+
+  /* ── UPLOAD ZONE ── */
+  .upload-zone { border: 2px dashed var(--border); border-radius: 12px; padding: 28px 16px; text-align: center; cursor: pointer; transition: all 0.2s; background: var(--surface); margin-bottom: 14px; }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--accent); background: var(--accent-light); }
+  .upload-zone .icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-zone h2 { font-size: 16px; color: var(--accent); margin-bottom: 4px; }
+  .upload-zone p { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+
+  .file-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; padding: 6px 14px; border-radius: 20px; font-family: 'DM Mono', monospace; font-size: 11px; margin-bottom: 12px; }
+  .file-badge .remove { cursor: pointer; opacity: 0.7; padding: 2px 4px; }
+
+  /* ── GENERATE BUTTON ── */
+  .btn-generate { width: 100%; padding: 16px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-family: 'EB Garamond', serif; font-size: 17px; cursor: pointer; transition: background 0.15s; min-height: 52px; }
+  .btn-generate:hover { background: #1a3a0e; }
+  .btn-generate:disabled { background: var(--border); cursor: not-allowed; }
+
+  /* ── STATS ── */
+  .stats-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); flex: 1; min-width: 100px; }
+  .stat strong { display: block; font-size: 18px; color: var(--accent); font-family: 'EB Garamond', serif; font-weight: 600; }
+
+  /* ── SUPPLIER CARDS ── */
+  .supplier-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .supplier-header { background: var(--accent-light); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; min-height: 56px; }
+  .supplier-header:hover { background: #dce8d5; }
+  .supplier-name { font-size: 15px; font-weight: 600; color: var(--accent); flex: 1; min-width: 0; }
+  .supplier-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  @media (max-width: 500px) { .supplier-meta .hide-mobile { display: none; } }
+  .badge { background: var(--accent); color: #fff; padding: 3px 8px; border-radius: 10px; font-size: 10px; font-family: 'DM Mono', monospace; white-space: nowrap; }
+  .badge.sent { background: var(--accent-mid); }
+  .chevron { font-size: 12px; color: var(--muted); flex-shrink: 0; }
+  .supplier-body { display: none; }
+  .supplier-body.open { display: block; }
+
+  /* ── SECTION TITLES ── */
+  .section-title { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 10px; }
+  .email-section { padding: 14px 16px; }
+  @media (min-width: 600px) { .email-section { padding: 20px 24px; } }
+
+  /* ── ORDER TABLE ── */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 8px; border-radius: 4px; }
+  .order-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 500px; }
+  .order-table th { background: var(--bg); padding: 7px 10px; text-align: left; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
+  .order-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .order-table tr:last-child td { border-bottom: none; }
+
+  /* ── MANUAL INPUTS ── */
+  .manual-input { width: 100%; padding: 8px 10px; font-family: 'EB Garamond', serif; font-size: 14px; border: 1px dashed var(--warning); border-radius: 4px; background: var(--warning-bg); color: var(--warning); outline: none; min-height: 40px; }
+  .manual-input:focus { border-style: solid; background: #fff; color: var(--text); }
+  .manual-select { width: 100%; padding: 8px 10px; font-family: 'EB Garamond', serif; font-size: 13px; border: 1px dashed var(--warning); border-radius: 4px; background: var(--warning-bg); color: var(--warning); outline: none; cursor: pointer; margin-bottom: 6px; min-height: 40px; }
+  .manual-select:focus { border-style: solid; background: #fff; color: var(--text); }
+  .manual-fields { display: flex; flex-direction: column; gap: 4px; }
+  .tecnico-badge { display: inline-block; background: var(--accent-light); border: 1px solid var(--accent); color: var(--accent); padding: 3px 8px; border-radius: 10px; font-family: 'DM Mono', monospace; font-size: 10px; margin-top: 4px; }
+  .tecnico-missing { color: var(--warning); font-family: 'DM Mono', monospace; font-size: 10px; margin-top: 4px; display: block; }
+
+  /* ── EMAIL BOX ── */
+  .email-box { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; font-family: 'EB Garamond', serif; }
+  .email-box[contenteditable="true"] { outline: none; border-color: var(--accent); background: #fff; }
+  @media (min-width: 600px) { .email-box { padding: 18px 22px; font-size: 15px; } }
+
+  /* ── ACTION BUTTONS ── */
+  .actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
+  .actions button { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 10px 14px; border: 1px solid; border-radius: 4px; cursor: pointer; transition: all 0.15s; min-height: 42px; }
+  .btn-refresh-email { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; background: var(--bg); color: var(--muted); transition: all 0.15s; margin-bottom: 10px; min-height: 40px; }
+  .btn-copy { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-copy:hover { background: #1a3a0e; }
+  .btn-edit { background: transparent; color: var(--accent); border-color: var(--accent); }
+  .btn-edit:hover { background: var(--accent-light); }
+  .btn-mail { background: transparent; color: var(--muted); border-color: var(--border); }
+  .btn-mail:hover { background: var(--bg); color: var(--text); }
+  .btn-excel { background: transparent; color: #15803d; border-color: #15803d; }
+  .btn-excel:hover { background: #f0fdf4; }
+  .btn-mark { background: transparent; color: var(--muted); border-color: var(--border); }
+  .btn-mark.marked { background: #e8f5e3; color: var(--accent-mid); border-color: var(--accent-mid); }
+  .copied-msg { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); opacity: 0; transition: opacity 0.3s; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0 16px; }
+  .warning-note { background: var(--warning-bg); border: 1px solid #f59e0b; border-radius: 6px; padding: 9px 12px; font-family: 'DM Mono', monospace; font-size: 11px; color: var(--warning); margin-bottom: 10px; }
+  .error-msg { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px; padding: 10px 14px; font-family: 'DM Mono', monospace; font-size: 12px; color: #dc2626; margin-top: 10px; }
+
+  /* ── STORICO ── */
+  .storico-section { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  @media (min-width: 600px) { .storico-section { padding: 24px; } }
+  .storico-header-bar { background: var(--accent); color: #fff; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  @media (min-width: 600px) { .storico-header-bar { padding: 16px 24px; } }
+  .storico-title { font-size: 18px; font-weight: 600; }
+  .storico-sub { font-family: 'DM Mono', monospace; font-size: 10px; opacity: 0.7; }
+  .storico-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .storico-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .storico-card-hdr { background: var(--accent-light); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+  .storico-fornitore { font-size: 15px; font-weight: 600; color: var(--accent); }
+  .storico-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .storico-data { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); text-align: right; }
+  .storico-totale { font-size: 15px; font-weight: 600; color: var(--accent); text-align: right; margin-top: 2px; }
+  .search-bar { width: 100%; padding: 11px 14px; font-family: 'EB Garamond', serif; font-size: 15px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); outline: none; margin-bottom: 16px; min-height: 46px; }
+
+  /* ── STORICO TABLE ── */
+  .storico-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 400px; }
+  .storico-table th { background: var(--bg); padding: 6px 12px; text-align: left; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); }
+  .storico-table td { padding: 7px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .storico-table tr:last-child td { border-bottom: none; }
+  .storico-footer { padding: 10px 16px; text-align: right; }
+
+  input[type="file"] { display: none; }
+  #results { display: none; }
+
+  /* ── MOBILE SPECIFIC ── */
+  @media (max-width: 480px) {
+    header h1 { font-size: 17px; }
+    .btn-logout { font-size: 10px; padding: 5px 10px; }
+    .supplier-name { font-size: 13px; }
+    .actions button { font-size: 10px; padding: 9px 10px; }
+    .stat strong { font-size: 16px; }
+    .stats-bar { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+<script>
+// Verifica autenticazione
+(function(){
+  const auth = sessionStorage.getItem('assoproli_auth');
+  const ts = parseInt(sessionStorage.getItem('assoproli_ts') || '0');
+  if (!auth || (Date.now() - ts) >= 8 * 3600 * 1000) {
+    window.location.href = 'index.html';
+  }
+})();
+</script>
+
+
+<header>
+  <div>
+    <div class="logo">Assoproli Bari · Gestione Ordini</div>
+    <h1>Email Ordini Fornitori OCM</h1>
+    <div class="subtitle">P.O. OCM olio anno 2026 · CUP: B38H26000400005</div>
+  </div>
+  <button class="btn-logout" onclick="logout()">Esci</button>
+</header>
+
+<div class="main-nav" id="main-nav">
+  <button onclick="switchMainTab('ordini',this)" id="nav-ordini" class="nav-btn active">Ordini</button>
+  <button onclick="switchMainTab('storico',this)" id="nav-storico" class="nav-btn">Storico Ordini</button>
+  <button onclick="switchMainTab('settings',this)" id="nav-settings" class="nav-btn">Impostazioni</button>
+</div>
+
+<div class="container" id="tab-ordini-section">
+
+  <div class="upload-grid" id="settings-grid" style="display:none">
+    <div class="file-block">
+      <div class="fb-title">📋 Anagrafica Fornitori</div>
+      <div class="fb-status" id="anagraficaStatus">Nessun file caricato</div>
+      <button class="btn-upload" onclick="document.getElementById('anagraficaInput').click()">Carica / Aggiorna</button>
+      <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateFornitore()">📥 Scarica template</button>
+      <input type="file" id="anagraficaInput" accept=".xlsx,.xls" onchange="loadAnagrafica(this)">
+    </div>
+    <div class="file-block">
+      <div class="fb-title">👷 Elenco Tecnici</div>
+      <div class="fb-status" id="tecniciStatus">Nessun file caricato — verranno usati i dati predefiniti</div>
+      <button class="btn-upload" onclick="document.getElementById('tecniciInput').click()">Carica / Aggiorna</button>
+      <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateTecnici()">📥 Scarica template</button>
+      <input type="file" id="tecniciInput" accept=".xlsx,.xls" onchange="loadTecnici(this)">
+    </div>
+    <div class="file-block">
+      <div class="fb-title">🏭 Elenco Cooperative</div>
+      <div class="fb-status" id="coopStatus">Dati predefiniti attivi</div>
+      <button class="btn-upload" onclick="document.getElementById('coopInput').click()">Carica / Aggiorna</button>
+      <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateCooperative()">📥 Scarica template</button>
+      <input type="file" id="coopInput" accept=".xlsx,.xls" onchange="loadCooperative(this)">
+    </div>
+  </div>
+
+  <!-- SETTINGS TAB -->
+  <div id="tab-settings-section" style="display:none;padding:20px 0">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:20px">Gestione Dati</div>
+    <div class="upload-grid" id="settings-grid-visible">
+      <div class="file-block">
+        <div class="fb-title">Anagrafica Fornitori</div>
+        <div class="fb-status" id="anagraficaStatus2">95 fornitori predefiniti attivi</div>
+        <button class="btn-upload" onclick="document.getElementById('anagraficaInput2').click()">Carica / Aggiorna</button>
+        <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateFornitore()">Scarica template</button>
+        <input type="file" id="anagraficaInput2" accept=".xlsx,.xls" onchange="loadAnagrafica(this);document.getElementById('anagraficaStatus2').textContent='Caricato: '+this.files[0].name;document.getElementById('anagraficaStatus').textContent='Caricato: '+this.files[0].name;">
+      </div>
+      <div class="file-block">
+        <div class="fb-title">Elenco Tecnici</div>
+        <div class="fb-status" id="tecniciStatus2">12 tecnici predefiniti attivi</div>
+        <button class="btn-upload" onclick="document.getElementById('tecniciInput2').click()">Carica / Aggiorna</button>
+        <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateTecnici()">Scarica template</button>
+        <input type="file" id="tecniciInput2" accept=".xlsx,.xls" onchange="loadTecnici(this);document.getElementById('tecniciStatus2').textContent='Caricato: '+this.files[0].name;document.getElementById('tecniciStatus').textContent='Caricato: '+this.files[0].name;">
+      </div>
+      <div class="file-block">
+        <div class="fb-title">Elenco Cooperative</div>
+        <div class="fb-status" id="coopStatus2">17 cooperative predefinite attive</div>
+        <button class="btn-upload" onclick="document.getElementById('coopInput2').click()">Carica / Aggiorna</button>
+        <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateCooperative()">Scarica template</button>
+        <input type="file" id="coopInput2" accept=".xlsx,.xls" onchange="loadCooperative(this);document.getElementById('coopStatus2').textContent='Caricato: '+this.files[0].name;document.getElementById('coopStatus').textContent='Caricato: '+this.files[0].name;">
+      </div>
+    </div>
+    <div style="margin-top:24px;background:#fffdf8;border:1px solid var(--border);border-radius:8px;padding:20px">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:8px;color:var(--accent)">Come funziona</div>
+      <p style="font-size:14px;color:var(--muted);line-height:1.6">I file predefiniti contengono tutti i dati aggiornati al momento dell'installazione. Quando hai aggiornamenti (nuovi fornitori, tecnici o cooperative), scarica il template, modifica i dati, e ricaricalo qui. Le modifiche saranno attive subito per questa sessione.</p>
+    </div>
+  </div>
+
+  <div class="upload-zone" id="dropZone" onclick="document.getElementById('ordiniInput').click()"
+       ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+    <div class="icon">📊</div>
+    <h2>Carica il file Excel degli ordini</h2>
+    <p>Clicca qui oppure trascina il file .xlsx</p>
+    <input type="file" id="ordiniInput" accept=".xlsx,.xls" onchange="loadOrdini(this)">
+  </div>
+  <div id="fileBadge"></div>
+  <div id="errorMsg"></div>
+
+  <button class="btn-generate" id="btnGenerate" onclick="generateEmails()" disabled>
+    ✉ Genera Email per tutti i Fornitori
+  </button>
+
+  <div id="results">
+    <div style="height:32px"></div>
+    <div class="stats-bar" id="statsBar"></div>
+    <div id="suppliers"></div>
+  </div>
+
+</div>
+
+<script>
+let anagraficaData = {"AGENZIA 24 ORE DI PAGANO SALVATORE": {"pec": "agenzia24ore@pec.it", "piva": "05941880725", "sdi": ""}, "AGRI IONICA SRL": {"pec": "agriionica@tin.it", "piva": "02741930735", "sdi": "X2PH38J"}, "AGRI MAINO S.A.S": {"pec": "info@pec.agrimaino.com", "piva": "02542020728", "sdi": ""}, "AGRI MECCANICA NPM SRLS": {"pec": "agri.npmsrls@pec.it", "piva": "03039310739", "sdi": ""}, "AGRI PERRONE S.R.L.": {"pec": "agriperronesrl@pec.buffetti.it", "piva": "04822730752", "sdi": ""}, "AGRI WORLD SRL": {"pec": "agroworldsrl@pec.it", "piva": "06186370729", "sdi": ""}, "AGRICOLA BITONTINA DI PICICCI MICHELE": {"pec": "agricolabitontina@pec.it", "piva": "04990170724", "sdi": ""}, "AGRICOLA NOCESE SRL": {"pec": "agricolanocese@pec.it", "piva": "07349640727", "sdi": ""}, "AGRISELL SRL": {"pec": "agrisellsrl@pec.it", "piva": "08687670722", "sdi": ""}, "ALUA MAQUINARIA AGRICOLA S.L.": {"pec": "", "piva": "B93685972", "sdi": ""}, "AMENDUNI NICOLA SPA": {"pec": "amenduninicolaspa@legalmail.it", "piva": "01213290248", "sdi": ""}, "ANTONICELLI FABIO": {"pec": "fb.antonicelli@pec.it", "piva": "06559430720", "sdi": "0000000"}, "BARILE AGRIBIKE DI BARILE F.SCO, A.DO E G.PPE SNC": {"pec": "barileagribike@pec.it", "piva": "08237410728", "sdi": ""}, "BARNABA MACCHINE AGRICOLE SRL": {"pec": "barnabamacchineagricole@pec.it", "piva": "05856990725", "sdi": ""}, "BERTINI SERRAMENTI SRL": {"pec": "bertiniserramentisrls@pec.it", "piva": "07905400722", "sdi": ""}, "BILANCIAI ELETTRONICA DI DIMAGGIO RAFFAELLA": {"pec": "bil.elettronica@pec.libero.it", "piva": "05863290721", "sdi": ""}, "BOSCO VITTORIO DI BOSCO MARCO &AMP; C. SNC": {"pec": "bosco-v@postacertificata.com", "piva": "01548830189", "sdi": ""}, "CENTRIFUGHE ITALDECANTER S.R.L.": {"pec": "italdecantersrl@legalmail.it", "piva": "04504200231", "sdi": ""}, "CHIAPPERINI GAETANO": {"pec": "gaetanochiappe@pec.it", "piva": "05669750720", "sdi": ""}, "CLEMENTE S.R.L.": {"pec": "clemente@pec.it", "piva": "05042880723", "sdi": ""}, "CLIMACALOR SRL": {"pec": "climacalorsrl@pec.it", "piva": "08519140720", "sdi": ""}, "CORDINI SRL": {"pec": "cordinisrl@legalmail.it", "piva": "06390440722", "sdi": ""}, "D'AMICO OFFICINE SRL": {"pec": "damicofficinesrl@pec.it", "piva": "02126360748", "sdi": ""}, "D.S.G. SRL": {"pec": "d.s.g.srl@pec.it", "piva": "08331350721", "sdi": ""}, "DI MOLA SERVICE SNC DI DIMOLA P. E FIGLI": {"pec": "dimolaservice@pec.it", "piva": "06348540722", "sdi": ""}, "DI PALMA S.A.S DI DI PALMA RAFFAELE &AMP; C.": {"pec": "dipalmasas@sicurapec", "piva": "07031090728", "sdi": ""}, "DIDACO S.R.L.": {"pec": "didaco@pec.it", "piva": "06786170727", "sdi": ""}, "DIGIPLUS DI ANTONIO GARGANO": {"pec": "digiplus@pec.it", "piva": "06990500727", "sdi": ""}, "DILEO EMANUELE": {"pec": "dileo.emanuele@pec.it", "piva": "04105520722", "sdi": ""}, "DITTA CARRETTA GIUSEPPE": {"pec": "carrettagiuseppe1@pec.it", "piva": "08580140724", "sdi": ""}, "DIVINCENZO SALVATORE": {"pec": "divincenzosalvatore@arubapec.it", "piva": "03345730729", "sdi": ""}, "ENOLBARI DI SANCIPRIANI NICOLA INDRACCOLO NICOLA SNC": {"pec": "enolbari@aziendapec.it", "piva": "02778780722", "sdi": ""}, "EUROFARM SAS DEI F.LLI FUZIO MICHELE E PIETRO &AMP; C.": {"pec": "eurofarm@pec.it", "piva": "05251490727", "sdi": ""}, "EUROINOX SNC DI ARUANNO &AMP; DI NANNI": {"pec": "euroinoxsnc@pec.it", "piva": "06010520721", "sdi": "0000000"}, "F.LLI PALUMBO S.R.L": {"pec": "f.llipalumbosrl@pec.it", "piva": "02058680741", "sdi": ""}, "FALCO IMPIANTI E MACCHINE OLEARIE": {"pec": "falco_srl@pec", "piva": "07604090725", "sdi": ""}, "FARETRA.COM SRL": {"pec": "faretracomsrl@pec.it", "piva": "03258810716", "sdi": ""}, "FERRI GIOVANNI": {"pec": "ferri_giovanni@pec.it", "piva": "00883760738", "sdi": ""}, "FOSS ITALIA S.R.L.": {"pec": "fossitalia@pec.it", "piva": "00410720288", "sdi": ""}, "FRANCO ANTONICELLI &AMP; FIGLI S.A.S": {"pec": "antonicellisas@pec.it", "piva": "00264290727", "sdi": ""}, "GATTI FORNITURE SRL": {"pec": "gattiforniture@legalmail.it", "piva": "07123700721", "sdi": ""}, "GIOVANNI MAGGIO E FIGLI S.R.L.": {"pec": "gmaggiosrl@arubapec.it", "piva": "05573600722", "sdi": ""}, "I BILANCIAI": {"pec": "ibilanciaisrl@pec.it", "piva": "03555230758", "sdi": ""}, "ICT CUBE SRL": {"pec": "ictcube@pec.it", "piva": "07085050727", "sdi": ""}, "IDRO MAFFEI DI MAFFEI GIUSEPPE": {"pec": "maffeigiuseppe94@pec.it", "piva": "08502000725", "sdi": ""}, "IMPMAC OIL SRLS": {"pec": "mastrandreagiuseppe42@pec.it", "piva": "08976830722", "sdi": ""}, "INCHINGOLO DOMENICO SRL": {"pec": "inchingolodomenico@pec.valorelegale.it", "piva": "05017500728", "sdi": ""}, "INDUSTRIE FRACCHIOLLA S.P.A.": {"pec": "amministrazionefracchiolla@pec.it", "piva": "04936100728", "sdi": ""}, "INOX IMPIANTI SRL": {"pec": "inoximpianti@arubapec.it", "piva": "09967780967", "sdi": "M5UXCR1"}, "IRISUD DI CAMPANALE NICLA": {"pec": "campanale.nicla86@pec.it", "piva": "08909100722", "sdi": ""}, "IRONMEC S.R.L. UNIPERSONALE": {"pec": "ironmacsrl@arubapec.it", "piva": "07311820729", "sdi": "M5UXCR1"}, "IRRIGAZIONE A GOCCIA SRL": {"pec": "irrigazioneagocciasrl@pec.it", "piva": "04219990712", "sdi": "M5XCR1"}, "ISAGRI SRL": {"pec": "isagri@legalmail.it", "piva": "12239280154", "sdi": "0000000"}, "ITALIMPIANTI SOCIETA' COOPERATIVA": {"pec": "italimpianticorato@pec.it", "piva": "03674070721", "sdi": ""}, "IVONE S.R.L.": {"pec": "ivonetrattori@pec.it", "piva": "06339730720", "sdi": ""}, "JCOPLASTIC S.P.A.": {"pec": "commerciale@cert.jcoplastic.com", "piva": "12549920150", "sdi": ""}, "LONGO TECNOLOGIE DEL TRASPORTO S.R.L": {"pec": "longotdt@pec.it", "piva": "05492160725", "sdi": ""}, "LORENZO RANIERI S.R.L.S": {"pec": "lorenzoranierisrl@pec.it", "piva": "07867380722", "sdi": ""}, "LORUSSO &AMP; SCALERA SRL": {"pec": "lorusso.scalerasrl@pec.it", "piva": "07988170721", "sdi": ""}, "MAD OFFICE SRL": {"pec": "madofficesrl@pec.it", "piva": "08682200723", "sdi": ""}, "MAGGIO SRL": {"pec": "maggiosrl2016@pec.it", "piva": "07909210721", "sdi": ""}, "MECHASERVICE SRLS": {"pec": "mechaservice@pec.it", "piva": "08411090726", "sdi": ""}, "METALMECCANICA TATONE": {"pec": "metalmeccanica.tatone@pec.it", "piva": "05577570723", "sdi": "W7YVJK9"}, "METOS ITALIA SRL": {"pec": "metositalia@pec.it", "piva": "02623150220", "sdi": ""}, "METROHM ITALIANA S.R.L.": {"pec": "metrohm.italiana@legalmail.it", "piva": "02190240123", "sdi": ""}, "MONGELLI BILANCE SRL": {"pec": "mongellibilancesrl@pec-amt.com", "piva": "02613530738", "sdi": ""}, "MTC TESTA CLAUDIO MACCHINE AGRICOLE E PNEUMATICHE": {"pec": "testa-claudio@pec.it", "piva": "00576740716", "sdi": ""}, "NETAFIM ITALIA S.R.L.": {"pec": "netafim@pec.it", "piva": "00204520993", "sdi": ""}, "NETSENS S.R.L.": {"pec": "amministrazione@pec.netsens.it", "piva": "05475380480", "sdi": ""}, "OFFICINA MECCANICA LISO RICCARDO": {"pec": "liso.riccardo@arubapec.it", "piva": "01138810724", "sdi": ""}, "OMCA SUD": {"pec": "omcasudsrl@pec.it", "piva": "07578020724", "sdi": ""}, "PARTICOLORI SRL": {"pec": "particolorisrl@pec.it", "piva": "05780690722", "sdi": ""}, "PAVER SRL": {"pec": "paversrl@pec.it", "piva": "05535890726", "sdi": ""}, "PELLICO BILANCE SRL": {"pec": "pugliabilancesrl@pec.it", "piva": "08718960720", "sdi": "SUBM70N"}, "PETTA GP AGRICULTURAL SRL": {"pec": "pettaagricolturesrl@pec.it", "piva": "08793540728", "sdi": ""}, "PIERALISI MAIP SPA": {"pec": "pieralisimaip@pec.it", "piva": "00696010420", "sdi": ""}, "PLURIMA SOFTWARE S.R.L.": {"pec": "plurima@pec.plurima.it", "piva": "04356910721", "sdi": ""}, "PROGETTO AGRICOLO SAS DI SALVATO GIANCARLO &AMP; CO": {"pec": "progettoagricolo@pec.it", "piva": "06973750729", "sdi": ""}, "PUGLIAPROJECT SRLS": {"pec": "pugliaprojectsrls@pec.it", "piva": "08227960724", "sdi": ""}, "SALIERNO SRL": {"pec": "saliernosrl@pec.buffetti.it", "piva": "06111240724", "sdi": ""}, "SANT'ORONZO SISTEMI PRODUTTIVI": {"pec": "santoronzo@arubapec.it", "piva": "04984620759", "sdi": ""}, "SATI IMPIANTI SRL": {"pec": "sati-srl@pec.it", "piva": "02481210744", "sdi": ""}, "SBANO CARMELO": {"pec": "sbanocarmelo@pec.it", "piva": "00217680743", "sdi": ""}, "SCARDIGNO CLIMASERVICE S.R.L.": {"pec": "scardigno.climaservice.srl@pec.it", "piva": "08756450725", "sdi": ""}, "SCHIRALLI  GREGORIO": {"pec": "schiralligregorio@pec.it", "piva": "04337490728", "sdi": "0000000"}, "SIVILLI TRACTORS": {"pec": "pec.sivilli@sicurezzapostale.it", "piva": "08012050723", "sdi": ""}, "SIVO ETTORE SRL": {"pec": "sivoettoresrl@pec.it", "piva": "08138040723", "sdi": ""}, "SPAZIO VERDE DI MONTANARO GIUSEPPE": {"pec": "spazioverdeirr@pec.it", "piva": "01459520746", "sdi": ""}, "SUD CARRELLI SRL": {"pec": "sudcarrellisrl@pec.it", "piva": "05830890728", "sdi": ""}, "T.R. TURONI S.R.L.": {"pec": "trturoni@pec.it", "piva": "01036430401", "sdi": ""}, "TEKNOINDUSTRIAL SRL": {"pec": "teknoindustrial@pec.it", "piva": "07898120725", "sdi": ""}, "TERSAN PUGLIA S.P.A.": {"pec": "tersanpuglia@pec.it", "piva": "00475590725", "sdi": ""}, "TRAPVIEW ITALIA SRL": {"pec": "trapviewitalia@legalmail.it", "piva": "03062170349", "sdi": ""}, "WATERVILL INGEGNERIA PER L'ACQUA SRL": {"pec": "gmwing@pec.it", "piva": "08550200722", "sdi": ""}, "Z.CO.MA.AGRI S.R.L": {"pec": "z.co.ma.agri@pec.it", "piva": "06594660729", "sdi": ""}};
+let tecniciData = {};
+let ordiniData = [];
+let supplierMap = {};
+
+// Indirizzi cooperative
+const COOP_INDIRIZZI = {"andria": {"nome": "Oleificio Riforma Fondiaria", "indirizzo": "Via Galliano 76, 76123 Andria (BT)"}, "riforma fondiaria": {"nome": "Oleificio Riforma Fondiaria", "indirizzo": "Via Galliano 76, 76123 Andria (BT)"}, "covan": {"nome": "Covan Coop. Olivicoltori Andriesi", "indirizzo": "Via Castel del Monte 76, 76123 Andria (BT)"}, "barletta": {"nome": "Cant. Coop. Coltivatori Diretti", "indirizzo": "Via Foggia 118, 76121 Barletta (BT)"}, "bitetto": {"nome": "Oleificio Produttori Agricoli", "indirizzo": "C.so Garibaldi 103, 70020 Bitetto (BA)"}, "bitonto": {"nome": "Oleificio \"Cima Di Bitonto\"", "indirizzo": "Via Modugno s.n., 70032 Bitonto (BA)"}, "capurso": {"nome": "Oleificio Coop.vo CC.DD.", "indirizzo": "Via Montesano 117, 70010 Capurso (BA)"}, "castellana grotte": {"nome": "Oleif. Sociale Coop.vo \"Viterbo\"", "indirizzo": "C.da Marchione - Via Turi n.c., 70013 Castellana Grotte (BA)"}, "castellana": {"nome": "Oleif. Sociale Coop.vo \"Viterbo\"", "indirizzo": "C.da Marchione - Via Turi n.c., 70013 Castellana Grotte (BA)"}, "castellaneta": {"nome": "Oleificio \"Il Progresso\"", "indirizzo": "Via Appia km 616, 74011 Castellaneta (TA)"}, "modugno": {"nome": "Oleificio Sociale", "indirizzo": "Via Sottomura, 70026 Modugno (BA)"}, "mola": {"nome": "Coop.va Agricola Molese", "indirizzo": "Via Mazzini 225, 70042 Mola di Bari (BA)"}, "monopoli": {"nome": "Coop. Rosario", "indirizzo": "C.da Cozzana 468, Monopoli (BA)"}, "ostuni": {"nome": "Oleificio Cooperativo Ostuni", "indirizzo": "C.da Morrone 8, Ostuni (BR)"}, "palo del colle": {"nome": "Oleificio Auricarro", "indirizzo": "Via Paolo Nunziante 17, Palo del Colle (BA)"}, "ruvo di puglia": {"nome": "Coop. Il Rosone", "indirizzo": "Via F.lli Carrante 7, Ruvo di Puglia (BA)"}, "ruvo": {"nome": "Coop. Il Rosone", "indirizzo": "Via F.lli Carrante 7, Ruvo di Puglia (BA)"}, "triggiano": {"nome": "Coop. Oleovinicoltura", "indirizzo": "Via Valenzano 15, Capurso (BA)"}, "valenzano": {"nome": "Coop.va Agricola CC.DD.", "indirizzo": "S.P. 133 Valenzano-Adelfia km 1, 70010 Valenzano (BA)"}};
+
+function getCoopIndirizzo(coop) {
+  if (!coop || coop === 'nan') return null;
+  const key = coop.toString().toLowerCase().trim();
+  const found = Object.keys(COOP_INDIRIZZI).find(k => key.includes(k) || k.includes(key));
+  return found ? COOP_INDIRIZZI[found] : null;
+}
+
+// Tecnici predefiniti (dal file caricato)
+const DEFAULT_TECNICI = {"capurso": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "triggiano": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "palo del colle": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "bitetto": {"nome": "De Lucia Nicolò", "tel": "340.9279827"}, "andria": {"nome": "Falco Raffaele", "tel": "380.7934399"}, "riforma fondiaria": {"nome": "Falco Raffaele", "tel": "380.7934399"}, "castellana grotte": {"nome": "Lillo Martino", "tel": "339.7362525"}, "castellana": {"nome": "Lillo Martino", "tel": "339.7362525"}, "mola": {"nome": "Lillo Martino", "tel": "339.7362525"}, "monopoli": {"nome": "Lillo Martino", "tel": "339.7362525"}, "bitonto": {"nome": "Malerba Francesco", "tel": "349.8820270"}, "modugno": {"nome": "Malerba Francesco", "tel": "349.8820270"}, "ruvo": {"nome": "Mastandrea Francesco", "tel": "389.6152515"}, "ruvo di puglia": {"nome": "Mastandrea Francesco", "tel": "389.6152515"}, "covan": {"nome": "Mundo Giovanni / Pezzolla Andrea", "tel": "320.9508556 / 389.1241306"}, "ostuni": {"nome": "Tunzi Nicola", "tel": "347.6075939"}, "barletta": {"nome": "Zinfollino Riccardo", "tel": "320.3154356"}, "castellaneta": {"nome": "Napolitano Gennaro", "tel": "348.0127910"}};
+
+function getTecnico(coop) {
+  if (!coop || coop === 'nan' || coop === '—') return null;
+  const key = coop.toString().toLowerCase().trim();
+  const src = Object.keys(tecniciData).length > 0 ? tecniciData : DEFAULT_TECNICI;
+  const found = Object.keys(src).find(k => key.includes(k) || k.includes(key));
+  return found ? src[found] : null;
+}
+
+function readXlsx(file, callback) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      callback(XLSX.utils.sheet_to_json(ws, { defval: '' }));
+    } catch(err) { showError('Errore lettura file: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function loadCooperative(input) {
+  const file = input.files[0]; if (!file) return;
+  readXlsx(file, rows => {
+    let count = 0;
+    rows.forEach(r => {
+      const vals = Object.values(r).map(v => v?.toString().trim() || '');
+      // Detect rows with a number in first col (new coop block)
+      const isNum = !isNaN(parseFloat(vals[0])) && vals[0] !== '';
+      if (!isNum) return;
+      const city = vals[1] || '';
+      const cap = vals[2] || '';
+      const nome = vals[3] || '';
+      const indirizzo = vals[4] || '';
+      if (!city || !nome || city.toUpperCase() === 'RESIDENZA') return;
+      if ('@' in nome || /^\d+$/.test(nome.replace(/[\s\-]/g,''))) return;
+      const key = city.toLowerCase().replace(/\s+di\s+bari/,'').replace(/\s+g\./,'').trim();
+      if (key && nome) {
+        COOP_INDIRIZZI[key] = { nome, indirizzo: indirizzo ? `${indirizzo}, ${cap} ${city}` : city };
+        count++;
+      }
+    });
+    setStatus('coopStatus', `✓ ${count} cooperative caricate — ${file.name}`, true);
+  });
+}
+
+function loadAnagrafica(input) {
+  const file = input.files[0]; if (!file) return;
+  readXlsx(file, rows => {
+    anagraficaData = {};
+    rows.forEach(r => {
+      const nome = (r['Intestazione'] || r['Ragione Sociale'] || '').toString().trim().toUpperCase();
+      if (nome) anagraficaData[nome] = {
+        pec: (r['PEC'] || r['pec'] || '').toString().trim(),
+        piva: (r['Partita Iva'] || r['P.IVA'] || '').toString().trim(),
+      };
+    });
+    setStatus('anagraficaStatus', `✓ ${Object.keys(anagraficaData).length} fornitori — ${file.name}`, true);
+  });
+}
+
+function loadTecnici(input) {
+  const file = input.files[0]; if (!file) return;
+  readXlsx(file, rows => {
+    tecniciData = {};
+    // Trova l'header row (riga con "TECNICO")
+    const headerRow = rows.find(r => Object.values(r).some(v => v?.toString().trim() === 'TECNICO'));
+    const dataRows = headerRow ? rows.slice(rows.indexOf(headerRow) + 1) : rows;
+
+    dataRows.forEach(r => {
+      const vals = Object.values(r).map(v => v?.toString().trim() || '');
+      const nome = vals[1] || '';
+      // Trova telefono (formato 3xx.xxxxxxx)
+      const tel = vals.find(v => /^3\d{2}[\.\s]?\d{7}$/.test(v.replace(/\s/,''))) || '';
+      // Ultima colonna = cooperative
+      const coopStr = vals[vals.length - 1] || '';
+      if (nome && coopStr && coopStr !== '' && coopStr.toLowerCase() !== 'nan') {
+        coopStr.split(/[-–,\n]+/).forEach(c => {
+          const key = c.trim().toLowerCase();
+          if (key && key.length > 1) tecniciData[key] = { nome, tel };
+        });
+      }
+    });
+    const n = Object.keys(tecniciData).length;
+    setStatus('tecniciStatus', `✓ ${n} mapping cooperative — ${file.name}`, true);
+  });
+}
+
+function loadOrdini(input) { const file = input.files[0]; if (file) processOrdiniFile(file); }
+
+function processOrdiniFile(file) {
+  readXlsx(file, rows => {
+    ordiniData = rows.filter(r => {
+      const f = (r['Fornitore'] || '').toString().trim();
+      return f && f !== '0';
+    });
+    document.getElementById('fileBadge').innerHTML =
+      `<div class="file-badge">📊 ${file.name} <span class="remove" onclick="removeOrdini()">✕</span></div>`;
+    document.getElementById('btnGenerate').disabled = false;
+    clearError();
+  });
+}
+
+function removeOrdini() {
+  ordiniData = [];
+  document.getElementById('fileBadge').innerHTML = '';
+  document.getElementById('ordiniInput').value = '';
+  document.getElementById('btnGenerate').disabled = true;
+  document.getElementById('results').style.display = 'none';
+}
+
+function setStatus(id, msg, ok) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'fb-status' + (ok ? ' loaded' : '');
+}
+function showError(msg) { document.getElementById('errorMsg').innerHTML = `<div class="error-msg">⚠ ${msg}</div>`; }
+function clearError() { document.getElementById('errorMsg').innerHTML = ''; }
+function handleDragOver(e) { e.preventDefault(); document.getElementById('dropZone').classList.add('dragover'); }
+function handleDragLeave() { document.getElementById('dropZone').classList.remove('dragover'); }
+function handleDrop(e) {
+  e.preventDefault(); document.getElementById('dropZone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0]; if (file) processOrdiniFile(file);
+}
+
+const LUOGHI_PREDEFINITI = [
+  {
+    label: '📍 Bisceglie – Via Oslo 32-34',
+    value: 'Via Oslo 32-34, 76011 Bisceglie (BT) – Rif. Andrea Lanotte, tel. +39 348 845 9946',
+  },
+  {
+    label: '📍 Palo del Colle – Via San Pio da Pietralcina',
+    value: 'Via San Pio da Pietralcina sn, 70027 Palo del Colle (BA) – Rif. Francesco Mastandrea tel. 389.6152515 / Michele Berardi tel. 334.9908645',
+  },
+];
+
+function getTendina(r) {
+  // 1. Luoghi predefiniti
+  const luoghiOpts = LUOGHI_PREDEFINITI
+    .map(l => `<option value="${l.value}">${l.label}</option>`)
+    .join('');
+
+  // 2. Cooperative dall'elenco
+  const coopOpts = Object.entries(COOP_INDIRIZZI)
+    .filter(([k]) => !['andria'].includes(k)) // evita duplicati
+    .sort((a,b) => a[1].nome.localeCompare(b[1].nome))
+    .map(([k, c]) => `<option value="${c.nome} – ${c.indirizzo}">${c.nome} (${c.indirizzo.split(',')[0]})</option>`)
+    .join('');
+
+  // 3. Indirizzo del socio stesso
+  const indirizzoSocio = `${r['Indirizzo']||''}, ${r['Cap']||''} ${r['Località']||''} ${r['Prov.'] ? '('+r['Prov.']+')' : ''}`.trim().replace(/^,\s*/,'');
+  const socioOpt = indirizzoSocio
+    ? `<option value="Presso il socio: ${indirizzoSocio}">📋 Indirizzo socio: ${indirizzoSocio}</option>`
+    : '';
+
+  return `<optgroup label="── Luoghi predefiniti ──">${luoghiOpts}</optgroup>
+          <optgroup label="── Cooperative ──">${coopOpts}</optgroup>
+          ${socioOpt ? `<optgroup label="── Indirizzo socio ──">${socioOpt}</optgroup>` : ''}`;
+}
+
+function getTecniciOptions() {
+  // Luoghi predefiniti fissi
+  const luoghiOptions = LUOGHI_PREDEFINITI
+    .map(l => `<option value="${l.value}">${l.label}</option>`)
+    .join('');
+
+  // Tecnici dall'elenco
+  const src = Object.keys(tecniciData).length > 0 ? tecniciData : DEFAULT_TECNICI;
+  const unici = {};
+  Object.values(src).forEach(t => { unici[t.nome] = t.tel; });
+  const tecniciOptions = Object.entries(unici)
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([nome, tel]) => `<option value="${nome} · tel. ${tel}">${nome} · ${tel}</option>`)
+    .join('');
+
+  return `<optgroup label="── Luoghi predefiniti ──">${luoghiOptions}</optgroup>
+          <optgroup label="── Tecnici ──">${tecniciOptions}</optgroup>`;
+}
+
+function generateEmails() {
+  const grouped = {};
+  ordiniData.forEach(r => {
+    const nome = (r['Fornitore'] || '').toString().trim();
+    if (nome) { if (!grouped[nome]) grouped[nome] = []; grouped[nome].push(r); }
+  });
+  const fornitori = Object.keys(grouped);
+  if (!fornitori.length) { showError('Nessun fornitore trovato.'); return; }
+
+  const totalValore = ordiniData.reduce((s, r) => s + (parseFloat(r['Valore']) || 0), 0);
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat"><strong>${fornitori.length}</strong>Fornitori</div>
+    <div class="stat"><strong>${ordiniData.length}</strong>Ordini totali</div>
+    <div class="stat"><strong>€ ${totalValore.toLocaleString('it-IT',{minimumFractionDigits:2})}</strong>Valore complessivo</div>
+  `;
+
+  supplierMap = {};
+  const container = document.getElementById('suppliers');
+  container.innerHTML = '';
+
+  fornitori.forEach((nome, idx) => {
+    const righe = grouped[nome];
+    const nomeUp = nome.toUpperCase();
+    const anKey = Object.keys(anagraficaData).find(k => k === nomeUp || k.includes(nomeUp) || nomeUp.includes(k));
+    const pec = anKey ? anagraficaData[anKey].pec : '';
+    const totale = righe.reduce((s, r) => s + (parseFloat(r['Valore']) || 0), 0);
+    const hasMissing = righe.some(r => { const c = (r['Coop']||'').toString().trim(); return !c || c === 'nan'; });
+
+    supplierMap[idx] = { righe, pec, nome };
+
+    const tableRows = righe.map((r, ri) => {
+      const coop = (r['Coop'] || '').toString().trim();
+      const hasCoop = coop && coop !== 'nan';
+      const tecnico = hasCoop ? getTecnico(coop) : null;
+      const coopCell = hasCoop
+        ? `<div><strong>${coop}</strong></div>
+           ${(() => { const ci = getCoopIndirizzo(coop); return ci ? `<div style="font-size:12px;color:var(--muted);font-family:'DM Mono',monospace">📍 ${ci.nome}<br>${ci.indirizzo}</div>` : ''; })()}
+           ${tecnico ? `<span class="tecnico-badge">👷 ${tecnico.nome} · ${tecnico.tel}</span>` : `<span class="tecnico-missing">⚠ Tecnico non assegnato</span>`}`
+        : `<div class="manual-fields">
+            <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:2px">DDT socio: <strong style="color:var(--text)">${r['Intestazione']||''} – ${r['Indirizzo']||''}, ${r['Cap']||''} ${r['Località']||''} ${r['Prov.'] ? '('+r['Prov.']+')' : ''}</strong></div>
+            <select class="manual-select" id="consegna-${idx}-${ri}" onchange="updatePreview(${idx})">
+              <option value="">🏠 Da consegnare presso...</option>
+              ${getTendina(r)}
+            </select>
+           </div>`;
+      return `<tr>
+        <td>${r['Intestazione']||''}</td>
+        <td style="font-size:13px">${r['Bene']||''}</td>
+        <td style="text-align:center">${r['Q.tà']||''}</td>
+        <td>€ ${parseFloat(r['Valore']||0).toLocaleString('it-IT',{minimumFractionDigits:2})}</td>
+        <td>${coopCell}</td>
+      </tr>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'supplier-card';
+    card.innerHTML = `
+      <div class="supplier-header" onclick="toggleCard(${idx})">
+        <div class="supplier-name">${nome}</div>
+        <div class="supplier-meta">
+          <span>${righe.length} ordine${righe.length>1?'i':''}</span>
+          <span>€ ${totale.toLocaleString('it-IT',{minimumFractionDigits:2})}</span>
+          ${pec ? `<span title="${pec}">📧 ${pec}</span>` : '<span style="color:#c0a060">⚠ PEC non trovata</span>'}
+          <span class="badge" id="badge-${idx}">DA INVIARE</span>
+        </div>
+        <span class="chevron" id="chev-${idx}">▼</span>
+      </div>
+      <div class="supplier-body" id="body-${idx}">
+        <div class="email-section">
+          <div class="section-title">Riepilogo Ordini</div>
+          ${hasMissing ? `<div class="warning-note">⚠ Alcune righe non hanno una cooperativa — inserisci il luogo di consegna nei campi evidenziati, poi clicca "Aggiorna testo email".</div>` : ''}
+          <div class="table-wrap"><table class="order-table">
+            <thead><tr><th>Socio</th><th>Articolo</th><th>Q.tà</th><th>Valore</th><th>Cooperativa / Tecnico / Luogo consegna</th></tr></thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+        <hr class="divider">
+        <div class="email-section">
+          <div class="section-title">Testo Email</div>
+          <button class="btn-refresh" onclick="updatePreview(${idx})">🔄 Aggiorna testo email</button>
+          <div class="email-box" id="email-${idx}" contenteditable="false">${buildEmailText(idx, righe, nome)}</div>
+          <div class="actions">
+            <button class="btn-copy" onclick="copyEmail(${idx})">📋 Copia testo</button>
+            <button class="btn-edit" onclick="toggleEdit(${idx})">✏️ Modifica</button>
+            <button class="btn-mail" onclick="openMail(${idx})">✉️ Apri in Mail</button>
+            <button class="btn-excel" onclick="downloadExcel(${idx})">📥 Scarica Excel allegato</button>
+            <button class="btn-mark" id="mark-${idx}" onclick="toggleSent(${idx})">☐ Segna come inviata</button>
+            <span class="copied-msg" id="copied-${idx}">✓ Copiato!</span>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function buildEmailText(idx, righe, nome) {
+  if (!righe) { const s = supplierMap[idx]; righe = s.righe; nome = s.nome; }
+
+  const totale = righe.reduce((s, r) => s + (parseFloat(r['Valore']) || 0), 0);
+  const totaleStr = totale.toLocaleString('it-IT', { minimumFractionDigits: 2 });
+
+  const perArticolo = {};
+  righe.forEach((r, ri) => {
+    const bene = r['Bene'] || '';
+    if (!perArticolo[bene]) perArticolo[bene] = { items: [], totalQty: 0 };
+    perArticolo[bene].items.push({ r, ri });
+    perArticolo[bene].totalQty += parseInt(r['Q.tà'] || 0);
+  });
+
+  const articoli = Object.entries(perArticolo).map(([bene, { items, totalQty }]) => {
+    if (items.length > 1) {
+      return `• ${bene} (n. ${totalQty} unità)\n   Riferimento DDT socio: vedi Excel allegato\n   Da consegnare presso: vedi Excel allegato – rif. vedi Excel allegato`;
+    } else {
+      const { r, ri } = items[0];
+      const socio = r['Intestazione'] || '';
+      const coop = (r['Coop'] || '').toString().trim();
+      const hasCoop = coop && coop !== 'nan';
+      const indirizzoSocio = `${r['Indirizzo']||''}, ${r['Cap']||''} ${r['Località']||''} ${r['Prov.'] ? '('+r['Prov.']+')' : ''}`.trim();
+      let consegnaStr;
+      if (hasCoop) {
+        const ci = getCoopIndirizzo(coop);
+        const t = getTecnico(coop);
+        const coopLabel = ci ? `${ci.nome}, ${ci.indirizzo}` : `Coop. ${coop}`;
+        const tecLabel = t ? ` – rif. ${t.nome}, tel. ${t.tel}` : '';
+        consegnaStr = coopLabel + tecLabel;
+      } else {
+        const consegnaEl = document.getElementById(`consegna-${idx}-${ri}`);
+        consegnaStr = consegnaEl && consegnaEl.value.trim() ? consegnaEl.value.trim() : '(da definire)';
+      }
+      return `• ${bene} (n. ${totalQty} unità)\n   Riferimento DDT socio: ${socio} – ${indirizzoSocio}\n   Da consegnare presso: ${consegnaStr}`;
+    }
+  }).join('\n\n');
+
+  return `Spett.le ${nome},
+
+Con riferimento ai vostri preventivi, Vi confermiamo l'acquisto delle seguenti attrezzature come da elenco allegato alla presente:
+
+${articoli}
+
+Valore complessivo: € ${totaleStr}
+
+Fatturazione:
+ASSOPROLI BARI SOC. COOPERATIVA AGRICOLA
+VIA M. SIGNORILE N. 34 – 70121 BARI
+P.IVA 02542020728 – Codice SDI T04ZHR3
+
+Luogo di consegna: Cooperative indicate per ogni socio, con preavviso telefonico di almeno due giorni al tecnico da noi indicato.
+Ogni DDT avrà come destinatario Assoproli Bari, Via M. Signorile 34 BARI, e come luogo di destinazione il singolo socio. La consegna sarà unica per cooperativa, che provvederà a siglare con timbro e firma il DDT, lasciandolo in originale, che il singolo socio firmerà al ritiro del bene.
+
+Indicare in DDT e fattura la matricola dell'attrezzatura in consegna.
+
+Inserire altresì la seguente dicitura:
+"Acquisto ai sensi del Reg. UE 2021/2115 P.O. OCM olio anno 2026 - CUP: B38H26000400005"
+
+Si prega di anticipare copia DDT e conformità per email all'indirizzo: amministrazione@assoproli.it
+
+Si comunica che a partire da quest'anno, oltre ad anticipare la documentazione via email, tutti i fornitori sono tenuti a caricare i documenti (DDT, conformità e relativi allegati) sul portale Assoproli Plurima, nella sezione dedicata ai fornitori:
+
+https://assoproli.plurima.it/login
+
+La consegna delle attrezzature ordinate sarà autorizzata solo a seguito della verifica dei documenti caricati sul portale.
+
+Pagamento: Bonifico bancario.
+
+Cordiali saluti,
+Assoproli Bari Soc. Cooperativa Agricola`;
+}
+
+function updatePreview(idx) {
+  const el = document.getElementById(`email-${idx}`);
+  if (el.contentEditable === 'true') return;
+  el.textContent = buildEmailText(idx);
+}
+
+function toggleCard(idx) {
+  const body = document.getElementById(`body-${idx}`);
+  const chev = document.getElementById(`chev-${idx}`);
+  body.classList.toggle('open');
+  chev.textContent = body.classList.contains('open') ? '▲' : '▼';
+}
+
+function copyEmail(idx) {
+  updatePreview(idx);
+  navigator.clipboard.writeText(document.getElementById(`email-${idx}`).innerText).then(() => {
+    const msg = document.getElementById(`copied-${idx}`);
+    msg.style.opacity = 1;
+    setTimeout(() => msg.style.opacity = 0, 2000);
+  });
+}
+
+function toggleEdit(idx) {
+  const el = document.getElementById(`email-${idx}`);
+  const editing = el.contentEditable === 'true';
+  el.contentEditable = editing ? 'false' : 'true';
+  if (!editing) el.focus();
+}
+
+function openMail(idx) {
+  updatePreview(idx);
+  const { pec, nome } = supplierMap[idx];
+  const body = encodeURIComponent(document.getElementById(`email-${idx}`).innerText);
+  const subject = encodeURIComponent(`Ordine OCM 2026 – Assoproli Bari – ${nome}`);
+  window.location.href = `mailto:${pec}?subject=${subject}&body=${body}`;
+}
+
+function downloadTemplateFornitore() {
+  const cols = ['Intestazione', 'Partita Iva', 'Indirizzo', 'Provincia', 'Località', 'Cap', 'PEC', 'Cod.SDI'];
+  const rows = [cols];
+
+  if (Object.keys(anagraficaData).length > 0) {
+    Object.entries(anagraficaData).sort((a,b) => a[0].localeCompare(b[0])).forEach(([nome, d]) => {
+      rows.push([nome, d.piva || '', '', '', '', '', d.pec || '', d.sdi || '']);
+    });
+  } else {
+    // Riga esempio
+    rows.push(['NOME FORNITORE SRL', '01234560728', 'VIA ESEMPIO 1', 'BA', 'BARI', '70100', 'fornitore@pec.it', 'XXXXXXX']);
+  }
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 40 }, { wch: 14 }, { wch: 28 }, { wch: 8 }, { wch: 20 }, { wch: 7 }, { wch: 35 }, { wch: 10 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Fornitori');
+  XLSX.writeFile(wb, 'Template_Fornitori_Assoproli.xlsx');
+}
+
+function downloadTemplateTecnici() {
+  const src = Object.keys(tecniciData).length > 0 ? tecniciData : DEFAULT_TECNICI;
+  // Costruisce lista unica di tecnici
+  const unici = {};
+  Object.entries(src).forEach(([coop, t]) => {
+    if (!unici[t.nome]) unici[t.nome] = { tel: t.tel, coops: [] };
+    unici[t.nome].coops.push(coop);
+  });
+
+  const cols = ['Tecnico', 'Telefono', 'Cooperative seguite'];
+  const rows = [cols];
+  Object.entries(unici).sort((a,b) => a[0].localeCompare(b[0])).forEach(([nome, { tel, coops }]) => {
+    rows.push([nome, tel, coops.join(' - ')]);
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 25 }, { wch: 16 }, { wch: 60 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Tecnici');
+  XLSX.writeFile(wb, 'Template_Tecnici_Assoproli.xlsx');
+}
+
+function downloadTemplateCooperative() {
+  const cols = ['Chiave', 'Nome Cooperativa', 'Indirizzo completo'];
+  const rows = [cols];
+  Object.entries(COOP_INDIRIZZI).sort((a,b) => a[0].localeCompare(b[0])).forEach(([key, c]) => {
+    rows.push([key, c.nome, c.indirizzo]);
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 20 }, { wch: 40 }, { wch: 55 }];
+
+  // Aggiungi nota esplicativa
+  ws['A1'].c = [{ a: 'Sistema', t: 'La colonna "Chiave" è il termine usato nel campo Coop dell\'Excel ordini (es. "bitonto", "andria", "covan"). Deve essere in minuscolo.' }];
+
+  XLSX.utils.book_append_sheet(wb, ws, 'Cooperative');
+  XLSX.writeFile(wb, 'Template_Cooperative_Assoproli.xlsx');
+}
+
+function downloadExcel(idx) {
+  const { righe, nome } = supplierMap[idx];
+
+  const cols = ['CUAA', 'Intestazione', 'Partita Iva', 'Indirizzo', 'Cap', 'Località', 'Prov.', 'Cod_SDI', 'Coop', 'Anno', 'Bene', 'Q.tà', 'Valore', 'Nome Cooperativa / Luogo di consegna', 'Indirizzo di consegna', 'Tecnico di riferimento', 'Telefono tecnico'];
+
+  const rows = [
+    [nome],
+    cols,
+  ];
+
+  righe.forEach((r, ri) => {
+    const coop = (r['Coop'] || '').toString().trim();
+    const hasCoop = coop && coop !== 'nan';
+    let nomeConsegna = '', indirizzoConsegna = '', tecnicoNome = '', tecnicoTel = '';
+
+    if (hasCoop) {
+      const ci = getCoopIndirizzo(coop);
+      const t = getTecnico(coop);
+      nomeConsegna = ci ? ci.nome : `Coop. ${coop}`;
+      indirizzoConsegna = ci ? ci.indirizzo : '';
+      tecnicoNome = t ? t.nome : '';
+      tecnicoTel = t ? t.tel : '';
+    } else {
+      const consegnaEl = document.getElementById(`consegna-${idx}-${ri}`);
+      const consegnaVal = consegnaEl ? consegnaEl.value.trim() : '';
+      if (consegnaVal) {
+        // Prova a separare nome da indirizzo (separati da " – ")
+        const parts = consegnaVal.split(' – ');
+        nomeConsegna = parts[0] || consegnaVal;
+        indirizzoConsegna = parts[1] || '';
+        // Cerca tecnico dalla selezione
+        const src = Object.keys(tecniciData).length > 0 ? tecniciData : DEFAULT_TECNICI;
+        const unici = {};
+        Object.values(src).forEach(t => { unici[t.nome] = t.tel; });
+        // Estrai nome tecnico dal valore se contiene "rif."
+        const rifMatch = consegnaVal.match(/Rif\.\s([^,·]+)/i);
+        if (rifMatch) {
+          tecnicoNome = rifMatch[1].trim();
+          const telMatch = consegnaVal.match(/tel\.\s([\d\.\+\/\s]+)/i);
+          tecnicoTel = telMatch ? telMatch[1].trim() : '';
+        }
+      }
+    }
+
+    rows.push([
+      r['CUAA'] || '',
+      r['Intestazione'] || '',
+      r['Partita Iva'] || '',
+      r['Indirizzo'] || '',
+      r['Cap'] || '',
+      r['Località'] || '',
+      r['Prov.'] || '',
+      r['Cod_SDI'] || '',
+      coop || '',
+      r['Anno'] || '',
+      r['Bene'] || '',
+      r['Q.tà'] || '',
+      r['Valore'] || '',
+      nomeConsegna,
+      indirizzoConsegna,
+      tecnicoNome,
+      tecnicoTel,
+    ]);
+  });
+
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [18,22,14,22,7,16,6,10,14,6,38,6,10,28,28,22,14].map(w => ({ wch: w }));
+  ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: cols.length - 1 } }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Ordini');
+  const safeName = nome.replace(/[^a-zA-Z0-9_\-]/g, '_').substring(0, 40);
+  XLSX.writeFile(wb, `Ordini_${safeName}_OCM2026.xlsx`);
+}
+
+async function toggleSent(idx) {
+  const btn = document.getElementById(`mark-${idx}`);
+  const badge = document.getElementById(`badge-${idx}`);
+  const isSent = btn.classList.contains('marked');
+
+  btn.classList.toggle('marked');
+  btn.textContent = isSent ? '☐ Segna come inviata' : '☑ Inviata';
+  badge.textContent = isSent ? 'DA INVIARE' : 'INVIATA';
+  badge.classList.toggle('sent', !isSent);
+
+  if (!isSent) {
+    // Salva nello storico condiviso
+    const { nome, righe, pec } = supplierMap[idx];
+    const now = new Date();
+    const dataInvio = now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
+    const record = {
+      id: Date.now(),
+      dataInvio,
+      fornitore: nome,
+      pec,
+      articoli: righe.map(r => ({
+        bene: r['Bene'] || '',
+        qty: r['Q.tà'] || '',
+        valore: r['Valore'] || '',
+        socio: r['Intestazione'] || '',
+        coop: r['Coop'] || '',
+      })),
+      totale: righe.reduce((s, r) => s + (parseFloat(r['Valore']) || 0), 0),
+    };
+    try {
+      const existing = await window.storage.get('storico-ordini', true);
+      const storico = existing ? JSON.parse(existing.value) : [];
+      storico.unshift(record);
+      await window.storage.set('storico-ordini', JSON.stringify(storico), true);
+      loadStorico();
+    } catch(e) { console.error('Storage error:', e); }
+  }
+}
+
+// ─── STORICO ─────────────────────────────────────────────────────────────────
+
+function switchMainTab(tab, el) {
+  document.querySelectorAll('#main-nav button').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+
+  // Show/hide sections
+  document.getElementById('tab-ordini-section').style.display = tab === 'ordini' ? 'block' : 'none';
+  document.getElementById('tab-storico-section').style.display = tab === 'storico' ? 'block' : 'none';
+  document.getElementById('tab-settings-section').style.display = tab === 'settings' ? 'block' : 'none';
+
+  if (tab === 'storico') loadStorico();
+}
+
+async function loadStorico() {
+  const container = document.getElementById('storicoList');
+  const statsEl = document.getElementById('storicoStats');
+  container.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--muted);padding:20px 0;">Caricamento storico...</div>';
+  try {
+    const result = await window.storage.get('storico-ordini', true);
+    const storico = result ? JSON.parse(result.value) : [];
+    if (!storico.length) {
+      container.innerHTML = '<div style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--muted);padding:20px 0;">Nessun ordine inviato ancora.</div>';
+      statsEl.innerHTML = '';
+      return;
+    }
+    const totValore = storico.reduce((s, r) => s + r.totale, 0);
+    statsEl.innerHTML = `
+      <div class="stat"><strong>${storico.length}</strong>Ordini inviati</div>
+      <div class="stat"><strong>${[...new Set(storico.map(r => r.fornitore))].length}</strong>Fornitori</div>
+      <div class="stat"><strong>€ ${totValore.toLocaleString('it-IT',{minimumFractionDigits:2})}</strong>Valore totale</div>
+    `;
+
+    // Filtro
+    const filtro = document.getElementById('storicoFiltro')?.value.toLowerCase() || '';
+    const filtered = filtro ? storico.filter(r =>
+      r.fornitore.toLowerCase().includes(filtro) ||
+      r.dataInvio.includes(filtro) ||
+      r.articoli.some(a => a.bene.toLowerCase().includes(filtro))
+    ) : storico;
+
+    container.innerHTML = filtered.map(r => `
+      <div class="storico-card">
+        <div class="storico-header">
+          <div>
+            <div class="storico-fornitore">${r.fornitore}</div>
+            <div class="storico-meta">📧 ${r.pec || '—'}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="storico-data">📅 ${r.dataInvio}</div>
+            <div class="storico-totale">€ ${r.totale.toLocaleString('it-IT',{minimumFractionDigits:2})}</div>
+          </div>
+        </div>
+        <table class="storico-table">
+          <thead><tr><th>Articolo</th><th>Socio</th><th>Coop</th><th>Q.tà</th><th>Valore</th></tr></thead>
+          <tbody>
+            ${r.articoli.map(a => `<tr>
+              <td>${a.bene}</td>
+              <td>${a.socio}</td>
+              <td>${a.coop || '—'}</td>
+              <td style="text-align:center">${a.qty}</td>
+              <td style="text-align:right">€ ${parseFloat(a.valore||0).toLocaleString('it-IT',{minimumFractionDigits:2})}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <div style="text-align:right;margin-top:8px">
+          <button class="btn-excel" onclick='scaricaStoricoOrdine(${JSON.stringify(r).replace(/'/g,"&#39;")})' style="font-size:11px;padding:6px 12px">📥 Scarica Excel</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    container.innerHTML = '<div style="color:#dc2626;font-family:\'DM Mono\',monospace;font-size:12px;">Errore caricamento storico.</div>';
+  }
+}
+
+function scaricaStoricoOrdine(r) {
+  const cols = ['Fornitore', 'PEC', 'Data Invio', 'Socio', 'Articolo', 'Cooperativa', 'Q.tà', 'Valore'];
+  const rows = [cols];
+  r.articoli.forEach(a => {
+    rows.push([r.fornitore, r.pec, r.dataInvio, a.socio, a.bene, a.coop||'', a.qty, a.valore]);
+  });
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [38,30,16,22,40,16,6,12].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb, ws, 'Ordine');
+  const d = r.dataInvio.replace(/[\/\s:]/g,'_');
+  const n = r.fornitore.replace(/[^a-zA-Z0-9]/g,'_').substring(0,30);
+  XLSX.writeFile(wb, `Ordine_${n}_${d}.xlsx`);
+}
+
+async function scaricaStoricoCompleto() {
+  try {
+    const result = await window.storage.get('storico-ordini', true);
+    const storico = result ? JSON.parse(result.value) : [];
+    if (!storico.length) return;
+    const cols = ['Fornitore', 'PEC', 'Data Invio', 'Socio', 'Articolo', 'Cooperativa', 'Q.tà', 'Valore'];
+    const rows = [cols];
+    storico.forEach(r => {
+      r.articoli.forEach(a => {
+        rows.push([r.fornitore, r.pec, r.dataInvio, a.socio, a.bene, a.coop||'', a.qty, a.valore]);
+      });
+    });
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(rows);
+    ws['!cols'] = [38,30,16,22,40,16,6,12].map(w=>({wch:w}));
+    XLSX.utils.book_append_sheet(wb, ws, 'Storico');
+    XLSX.writeFile(wb, 'Storico_Ordini_Assoproli_OCM2026.xlsx');
+  } catch(e) { console.error(e); }
+}
+
+// Carica storico all'avvio
+
+function logout(){
+  sessionStorage.removeItem('assoproli_auth');
+  sessionStorage.removeItem('assoproli_ts');
+  window.location.href = 'index.html';
+}
+
+window.addEventListener('load', () => { loadStorico(); });
+</script>
+
+</div><!-- end tab-ordini-section -->
+
+<div id="tab-storico-section" style="display:none">
+<!-- SEZIONE STORICO -->
+<div style="background:var(--accent);color:#fff;padding:20px 40px;margin-top:0">
+  <div>
+    <div>
+      <div class="storico-sub">Registro condiviso</div>
+      <div class="storico-title">Storico Ordini Inviati</div>
+    </div>
+    <div class="storico-btns"><button onclick="scaricaStoricoCompleto()" style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;padding:9px 18px;border:1px solid rgba(255,255,255,0.5);border-radius:4px;cursor:pointer;background:transparent;color:#fff;transition:all 0.15s">📥 Scarica storico completo</button>
+  </div></div>
+
+<div class="storico-section">
+  <div class="stats-bar" id="storicoStats" style="margin-bottom:20px"></div>
+
+  <div style="display:flex;gap:10px;margin-bottom:20px;align-items:center">
+    <input type="text" id="storicoFiltro" placeholder="Cerca per fornitore, data, articolo..." oninput="loadStorico()"
+      style="flex:1;padding:9px 14px;font-family:'EB Garamond',serif;font-size:15px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);outline:none">
+    <button onclick="loadStorico()" style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;padding:9px 16px;border:1px solid var(--border);border-radius:4px;cursor:pointer;background:var(--surface);color:var(--muted)">🔄 Aggiorna</button>
+  </div>
+
+  <div id="storicoList"></div>
+</div>
+
+<style>
+.storico-card { background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow); }
+.storico-header { background:var(--accent-light);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px; }
+.storico-fornitore { font-size:16px;font-weight:600;color:var(--accent); }
+.storico-meta { font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:3px; }
+.storico-data { font-family:'DM Mono',monospace;font-size:11px;color:var(--muted); }
+.storico-totale { font-size:16px;font-weight:600;color:var(--accent);margin-top:3px; }
+.storico-table { width:100%;border-collapse:collapse;font-size:13px;margin:0; }
+.storico-table th { background:var(--bg);padding:7px 16px;text-align:left;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border); }
+.storico-table td { padding:7px 16px;border-bottom:1px solid var(--border);vertical-align:top; }
+.storico-table tr:last-child td { border-bottom:none; }
+.storico-table tr:hover td { background:var(--accent-light); }
+</style>
+</div><!-- end tab-storico-section -->
+</body>
+</html>

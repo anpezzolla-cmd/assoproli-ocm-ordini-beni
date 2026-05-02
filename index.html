@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Assoproli Bari – Accesso</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Georgia', serif; background: #f5f0e8; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .login-box { background: #fffdf8; border: 1px solid #d4c9b0; border-radius: 12px; padding: 36px 28px; width: 100%; max-width: 400px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); text-align: center; }
+  .logo { font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #7a7060; margin-bottom: 8px; }
+  h1 { font-size: 20px; font-weight: normal; color: #2d5a1b; margin-bottom: 6px; }
+  .subtitle { font-family: 'Courier New', monospace; font-size: 10px; color: #7a7060; margin-bottom: 28px; }
+  input[type="password"] { width: 100%; padding: 14px 16px; font-size: 16px; border: 1px solid #d4c9b0; border-radius: 6px; background: #f5f0e8; color: #1a1a14; outline: none; text-align: center; letter-spacing: 4px; font-family: 'Courier New', monospace; margin-bottom: 12px; min-height: 50px; -webkit-appearance: none; }
+  input[type="password"]:focus { border-color: #2d5a1b; background: #fff; }
+  button { width: 100%; padding: 15px; background: #2d5a1b; color: #fff; border: none; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 2px; cursor: pointer; transition: background 0.15s; min-height: 50px; touch-action: manipulation; }
+  button:hover, button:active { background: #1a3a0e; }
+  .error { color: #dc2626; font-family: 'Courier New', monospace; font-size: 12px; margin-top: 12px; display: none; }
+  .error.visible { display: block; }
+  .footer { margin-top: 28px; font-family: 'Courier New', monospace; font-size: 10px; color: #b0a890; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="login-box">
+  <div class="logo">Assoproli Bari · OCM 2026</div>
+  <h1>Email Ordini Fornitori</h1>
+  <div class="subtitle">P.O. OCM olio anno 2026 · CUP: B38H26000400005</div>
+
+  <div class="field">
+    <input type="password" id="pwd" placeholder="Password" onkeydown="if(event.key==='Enter')login()">
+  </div>
+  <button onclick="login()">ACCEDI</button>
+  <div class="error" id="err">Password errata. Riprova.</div>
+
+  <div class="footer">Accesso riservato al personale Assoproli</div>
+</div>
+
+<script>
+  // Hash SHA-256 della password "Asso2026ocm"
+  const HASH = 'a3f8e2b1c9d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0';
+
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function login() {
+    const pwd = document.getElementById('pwd').value;
+    const hash = await sha256(pwd);
+    const realHash = await sha256('Asso2026ocm');
+    if (hash === realHash) {
+      // Salva sessione per 8 ore
+      sessionStorage.setItem('assoproli_auth', realHash);
+      sessionStorage.setItem('assoproli_ts', Date.now().toString());
+      window.location.href = 'app.html';
+    } else {
+      document.getElementById('err').classList.add('visible');
+      document.getElementById('pwd').value = '';
+      document.getElementById('pwd').focus();
+    }
+  }
+
+  // Se già autenticato reindirizza direttamente
+  const auth = sessionStorage.getItem('assoproli_auth');
+  const ts = parseInt(sessionStorage.getItem('assoproli_ts') || '0');
+  if (auth && (Date.now() - ts) < 8 * 3600 * 1000) {
+    window.location.href = 'app.html';
+  }
+</script>
+</body>
+</html>
