@@ -222,34 +222,64 @@
   </div>
 
   <!-- SETTINGS TAB -->
-  <div id="tab-settings-section" style="display:none;padding:20px 0">
-    <div style="font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:20px">Gestione Dati</div>
-    <div class="upload-grid" id="settings-grid-visible">
-      <div class="file-block">
-        <div class="fb-title">Anagrafica Fornitori</div>
-        <div class="fb-status" id="anagraficaStatus2">95 fornitori predefiniti attivi</div>
-        <button class="btn-upload" onclick="document.getElementById('anagraficaInput2').click()">Carica / Aggiorna</button>
-        <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateFornitore()">Scarica template</button>
-        <input type="file" id="anagraficaInput2" accept=".xlsx,.xls" onchange="loadAnagrafica(this);document.getElementById('anagraficaStatus2').textContent='Caricato: '+this.files[0].name;document.getElementById('anagraficaStatus').textContent='Caricato: '+this.files[0].name;">
+  <div id="tab-settings-section" style="display:none;padding:16px 0">
+
+    <div style="font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px">Gestione Dati</div>
+
+    <!-- FORNITORI -->
+    <div class="file-block" style="margin-bottom:12px">
+      <div class="fb-title">Anagrafica Fornitori</div>
+      <div class="fb-status" id="anagraficaStatus2">95 fornitori predefiniti attivi</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn-upload" onclick="downloadTemplateFornitore()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+          Scarica Excel Fornitori
+        </button>
+        <button class="btn-upload" onclick="document.getElementById('anagraficaInput2').click()">
+          Carica aggiornamento
+        </button>
       </div>
-      <div class="file-block">
-        <div class="fb-title">Elenco Tecnici</div>
-        <div class="fb-status" id="tecniciStatus2">12 tecnici predefiniti attivi</div>
-        <button class="btn-upload" onclick="document.getElementById('tecniciInput2').click()">Carica / Aggiorna</button>
-        <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateTecnici()">Scarica template</button>
-        <input type="file" id="tecniciInput2" accept=".xlsx,.xls" onchange="loadTecnici(this);document.getElementById('tecniciStatus2').textContent='Caricato: '+this.files[0].name;document.getElementById('tecniciStatus').textContent='Caricato: '+this.files[0].name;">
-      </div>
-      <div class="file-block">
-        <div class="fb-title">Elenco Cooperative</div>
-        <div class="fb-status" id="coopStatus2">17 cooperative predefinite attive</div>
-        <button class="btn-upload" onclick="document.getElementById('coopInput2').click()">Carica / Aggiorna</button>
-        <button class="btn-upload" style="color:var(--muted);border-color:var(--border)" onclick="downloadTemplateCooperative()">Scarica template</button>
-        <input type="file" id="coopInput2" accept=".xlsx,.xls" onchange="loadCooperative(this);document.getElementById('coopStatus2').textContent='Caricato: '+this.files[0].name;document.getElementById('coopStatus').textContent='Caricato: '+this.files[0].name;">
-      </div>
+      <input type="file" id="anagraficaInput2" accept=".xlsx,.xls" onchange="loadAnagrafica(this);document.getElementById('anagraficaStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('anagraficaStatus').textContent='Aggiornato: '+this.files[0].name;">
     </div>
-    <div style="margin-top:24px;background:#fffdf8;border:1px solid var(--border);border-radius:8px;padding:20px">
+
+    <!-- TECNICI -->
+    <div class="file-block" style="margin-bottom:12px">
+      <div class="fb-title">Elenco Tecnici</div>
+      <div class="fb-status" id="tecniciStatus2">12 tecnici predefiniti attivi</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn-upload" onclick="downloadTemplateTecnici()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+          Scarica Excel Tecnici
+        </button>
+        <button class="btn-upload" onclick="document.getElementById('tecniciInput2').click()">
+          Carica aggiornamento
+        </button>
+      </div>
+      <input type="file" id="tecniciInput2" accept=".xlsx,.xls" onchange="loadTecnici(this);document.getElementById('tecniciStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('tecniciStatus').textContent='Aggiornato: '+this.files[0].name;">
+    </div>
+
+    <!-- COOPERATIVE -->
+    <div class="file-block" style="margin-bottom:20px">
+      <div class="fb-title">Elenco Cooperative</div>
+      <div class="fb-status" id="coopStatus2">17 cooperative predefinite attive</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn-upload" onclick="downloadTemplateCooperative()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+          Scarica Excel Cooperative
+        </button>
+        <button class="btn-upload" onclick="document.getElementById('coopInput2').click()">
+          Carica aggiornamento
+        </button>
+      </div>
+      <input type="file" id="coopInput2" accept=".xlsx,.xls" onchange="loadCooperative(this);document.getElementById('coopStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('coopStatus').textContent='Aggiornato: '+this.files[0].name;">
+    </div>
+
+    <!-- NOTE -->
+    <div style="background:#fffdf8;border:1px solid var(--border);border-radius:8px;padding:16px">
       <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:8px;color:var(--accent)">Come funziona</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.6">I file predefiniti contengono tutti i dati aggiornati al momento dell'installazione. Quando hai aggiornamenti (nuovi fornitori, tecnici o cooperative), scarica il template, modifica i dati, e ricaricalo qui. Le modifiche saranno attive subito per questa sessione.</p>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7">
+        1. Clicca <strong>Scarica Excel</strong> per scaricare i dati attuali.<br>
+        2. Apri il file, apporta le modifiche (nuovi fornitori, tecnici, ecc.).<br>
+        3. Clicca <strong>Carica aggiornamento</strong> per ricaricare il file aggiornato.<br>
+        Le modifiche sono attive subito per tutta la sessione.
+      </p>
     </div>
   </div>
 
@@ -511,10 +541,15 @@ function generateEmails() {
            ${(() => { const ci = getCoopIndirizzo(coop); return ci ? `<div style="font-size:12px;color:var(--muted);font-family:'DM Mono',monospace">📍 ${ci.nome}<br>${ci.indirizzo}</div>` : ''; })()}
            ${tecnico ? `<span class="tecnico-badge">👷 ${tecnico.nome} · ${tecnico.tel}</span>` : `<span class="tecnico-missing">⚠ Tecnico non assegnato</span>`}`
         : `<div class="manual-fields">
-            <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:2px">DDT socio: <strong style="color:var(--text)">${r['Intestazione']||''} – ${r['Indirizzo']||''}, ${r['Cap']||''} ${r['Località']||''} ${r['Prov.'] ? '('+r['Prov.']+')' : ''}</strong></div>
+            <div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);margin-bottom:4px">DDT socio: <strong style="color:var(--text)">${r['Intestazione']||''} – ${r['Indirizzo']||''}, ${r['Cap']||''} ${r['Località']||''} ${r['Prov.'] ? '('+r['Prov.']+')' : ''}</strong></div>
+            <div style="font-size:9px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:2px">Luogo di consegna</div>
             <select class="manual-select" id="consegna-${idx}-${ri}" onchange="updatePreview(${idx})">
-              <option value="">🏠 Da consegnare presso...</option>
+              <option value="">Seleziona luogo di consegna...</option>
               ${getTendina(r)}
+            </select>
+            <div style="font-size:9px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:2px;margin-top:4px">Tecnico di riferimento</div>
+            <select class="manual-select" id="tecnico-${idx}-${ri}" onchange="updatePreview(${idx})">
+              ${getTecniciOptions()}
             </select>
            </div>`;
       return `<tr>
@@ -602,7 +637,10 @@ function buildEmailText(idx, righe, nome) {
         consegnaStr = coopLabel + tecLabel;
       } else {
         const consegnaEl = document.getElementById(`consegna-${idx}-${ri}`);
+        const tecnicoEl = document.getElementById(`tecnico-${idx}-${ri}`);
         consegnaStr = consegnaEl && consegnaEl.value.trim() ? consegnaEl.value.trim() : '(da definire)';
+        const tecnicoStr = tecnicoEl && tecnicoEl.value.trim() ? tecnicoEl.value.trim() : '';
+        if (tecnicoStr) consegnaStr += `\n   Tecnico di riferimento: ${tecnicoStr}`;
       }
       return `• ${bene} (n. ${totalQty} unità)\n   Riferimento DDT socio: ${socio} – ${indirizzoSocio}\n   Da consegnare presso: ${consegnaStr}`;
     }
@@ -622,7 +660,7 @@ VIA M. SIGNORILE N. 34 – 70121 BARI
 P.IVA 02542020728 – Codice SDI T04ZHR3
 
 Luogo di consegna: Cooperative indicate per ogni socio, con preavviso telefonico di almeno due giorni al tecnico da noi indicato.
-Ogni DDT avrà come destinatario Assoproli Bari, Via M. Signorile 34 BARI, e come luogo di destinazione il singolo socio. La consegna sarà unica per cooperativa, che provvederà a siglare con timbro e firma il DDT, lasciandolo in originale, che il singolo socio firmerà al ritiro del bene.
+Ogni DDT avrà come destinatario Assoproli Bari, Via M. Signorile 34 BARI, e come luogo di destinazione il singolo socio. La consegna sarà unica per cooperativa/luogo di consegna se singolo socio (indicato nell'eventuale file allegato), che provvederà a siglare con timbro e firma il DDT, e che conserverà l'originale. Nel caso si consegni presso singolo socio, dovrete provvedere a ritirare una copia del DDT firmato in originale che verrà in caso di necessità da voi consegnata ai nostri tecnici.
 
 Indicare in DDT e fattura la matricola dell'attrezzatura in consegna.
 
@@ -705,8 +743,10 @@ function downloadTemplateTecnici() {
   // Costruisce lista unica di tecnici
   const unici = {};
   Object.entries(src).forEach(([coop, t]) => {
-    if (!unici[t.nome]) unici[t.nome] = { tel: t.tel, coops: [] };
-    unici[t.nome].coops.push(coop);
+    const nome = t.nome || t.n || '';
+    const tel = t.tel || t.t || '';
+    if (!unici[nome]) unici[nome] = { tel: tel, coops: [] };
+    unici[nome].coops.push(coop);
   });
 
   const cols = ['Tecnico', 'Telefono', 'Cooperative seguite'];
@@ -726,7 +766,9 @@ function downloadTemplateCooperative() {
   const cols = ['Chiave', 'Nome Cooperativa', 'Indirizzo completo'];
   const rows = [cols];
   Object.entries(COOP_INDIRIZZI).sort((a,b) => a[0].localeCompare(b[0])).forEach(([key, c]) => {
-    rows.push([key, c.nome, c.indirizzo]);
+    const nome = c.nome || c.n || '';
+    const indirizzo = c.indirizzo || c.a || '';
+    rows.push([key, nome, indirizzo]);
   });
 
   const wb = XLSX.utils.book_new();
@@ -764,23 +806,17 @@ function downloadExcel(idx) {
       tecnicoTel = t ? t.tel : '';
     } else {
       const consegnaEl = document.getElementById(`consegna-${idx}-${ri}`);
+      const tecnicoSelEl = document.getElementById(`tecnico-${idx}-${ri}`);
       const consegnaVal = consegnaEl ? consegnaEl.value.trim() : '';
+      const tecnicoSelVal = tecnicoSelEl ? tecnicoSelEl.value.trim() : '';
       if (consegnaVal) {
-        // Prova a separare nome da indirizzo (separati da " – ")
-        const parts = consegnaVal.split(' – ');
-        nomeConsegna = parts[0] || consegnaVal;
-        indirizzoConsegna = parts[1] || '';
-        // Cerca tecnico dalla selezione
-        const src = Object.keys(tecniciData).length > 0 ? tecniciData : DEFAULT_TECNICI;
-        const unici = {};
-        Object.values(src).forEach(t => { unici[t.nome] = t.tel; });
-        // Estrai nome tecnico dal valore se contiene "rif."
-        const rifMatch = consegnaVal.match(/Rif\.\s([^,·]+)/i);
-        if (rifMatch) {
-          tecnicoNome = rifMatch[1].trim();
-          const telMatch = consegnaVal.match(/tel\.\s([\d\.\+\/\s]+)/i);
-          tecnicoTel = telMatch ? telMatch[1].trim() : '';
-        }
+        nomeConsegna = consegnaVal;
+      }
+      if (tecnicoSelVal) {
+        // formato "Nome Tecnico - tel. XXXXXXXXX"
+        const parts = tecnicoSelVal.split(' - tel. ');
+        tecnicoNome = parts[0] || tecnicoSelVal;
+        tecnicoTel = parts[1] || '';
       }
     }
 
