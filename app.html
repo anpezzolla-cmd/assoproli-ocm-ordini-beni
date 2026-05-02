@@ -221,67 +221,7 @@
     </div>
   </div>
 
-  <!-- SETTINGS TAB -->
-  <div id="tab-settings-section" style="display:none;padding:16px 0">
 
-    <div style="font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px">Gestione Dati</div>
-
-    <!-- FORNITORI -->
-    <div class="file-block" style="margin-bottom:12px">
-      <div class="fb-title">Anagrafica Fornitori</div>
-      <div class="fb-status" id="anagraficaStatus2">95 fornitori predefiniti attivi</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
-        <button class="btn-upload" onclick="downloadTemplateFornitore()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
-          Scarica Excel Fornitori
-        </button>
-        <button class="btn-upload" onclick="document.getElementById('anagraficaInput2').click()">
-          Carica aggiornamento
-        </button>
-      </div>
-      <input type="file" id="anagraficaInput2" accept=".xlsx,.xls" onchange="loadAnagrafica(this);document.getElementById('anagraficaStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('anagraficaStatus').textContent='Aggiornato: '+this.files[0].name;">
-    </div>
-
-    <!-- TECNICI -->
-    <div class="file-block" style="margin-bottom:12px">
-      <div class="fb-title">Elenco Tecnici</div>
-      <div class="fb-status" id="tecniciStatus2">12 tecnici predefiniti attivi</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
-        <button class="btn-upload" onclick="downloadTemplateTecnici()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
-          Scarica Excel Tecnici
-        </button>
-        <button class="btn-upload" onclick="document.getElementById('tecniciInput2').click()">
-          Carica aggiornamento
-        </button>
-      </div>
-      <input type="file" id="tecniciInput2" accept=".xlsx,.xls" onchange="loadTecnici(this);document.getElementById('tecniciStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('tecniciStatus').textContent='Aggiornato: '+this.files[0].name;">
-    </div>
-
-    <!-- COOPERATIVE -->
-    <div class="file-block" style="margin-bottom:20px">
-      <div class="fb-title">Elenco Cooperative</div>
-      <div class="fb-status" id="coopStatus2">17 cooperative predefinite attive</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
-        <button class="btn-upload" onclick="downloadTemplateCooperative()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
-          Scarica Excel Cooperative
-        </button>
-        <button class="btn-upload" onclick="document.getElementById('coopInput2').click()">
-          Carica aggiornamento
-        </button>
-      </div>
-      <input type="file" id="coopInput2" accept=".xlsx,.xls" onchange="loadCooperative(this);document.getElementById('coopStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('coopStatus').textContent='Aggiornato: '+this.files[0].name;">
-    </div>
-
-    <!-- NOTE -->
-    <div style="background:#fffdf8;border:1px solid var(--border);border-radius:8px;padding:16px">
-      <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:8px;color:var(--accent)">Come funziona</div>
-      <p style="font-size:14px;color:var(--muted);line-height:1.7">
-        1. Clicca <strong>Scarica Excel</strong> per scaricare i dati attuali.<br>
-        2. Apri il file, apporta le modifiche (nuovi fornitori, tecnici, ecc.).<br>
-        3. Clicca <strong>Carica aggiornamento</strong> per ricaricare il file aggiornato.<br>
-        Le modifiche sono attive subito per tutta la sessione.
-      </p>
-    </div>
-  </div>
 
   <div class="upload-zone" id="dropZone" onclick="document.getElementById('ordiniInput').click()"
        ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
@@ -322,7 +262,7 @@ function getCoopIndirizzo(coop) {
 }
 
 // Tecnici predefiniti (dal file caricato)
-const DEFAULT_TECNICI = {"capurso": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "triggiano": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "palo del colle": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "bitetto": {"nome": "De Lucia Nicolò", "tel": "340.9279827"}, "andria": {"nome": "Falco Raffaele", "tel": "380.7934399"}, "riforma fondiaria": {"nome": "Falco Raffaele", "tel": "380.7934399"}, "castellana grotte": {"nome": "Lillo Martino", "tel": "339.7362525"}, "castellana": {"nome": "Lillo Martino", "tel": "339.7362525"}, "mola": {"nome": "Lillo Martino", "tel": "339.7362525"}, "monopoli": {"nome": "Lillo Martino", "tel": "339.7362525"}, "bitonto": {"nome": "Malerba Francesco", "tel": "349.8820270"}, "modugno": {"nome": "Malerba Francesco", "tel": "349.8820270"}, "ruvo": {"nome": "Mastandrea Francesco", "tel": "389.6152515"}, "ruvo di puglia": {"nome": "Mastandrea Francesco", "tel": "389.6152515"}, "covan": {"nome": "Mundo Giovanni / Pezzolla Andrea", "tel": "320.9508556 / 389.1241306"}, "ostuni": {"nome": "Tunzi Nicola", "tel": "347.6075939"}, "barletta": {"nome": "Zinfollino Riccardo", "tel": "320.3154356"}, "castellaneta": {"nome": "Napolitano Gennaro", "tel": "348.0127910"}};
+const DEFAULT_TECNICI = {"capurso": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "triggiano": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "palo del colle": {"nome": "Cicala Giovanni", "tel": "338.2170398"}, "bitetto": {"nome": "De Lucia Nicolò", "tel": "340.9279827"}, "andria": {"nome": "Falco Raffaele", "tel": "380.7934399"}, "riforma fondiaria": {"nome": "Falco Raffaele", "tel": "380.7934399"}, "castellana grotte": {"nome": "Lillo Martino", "tel": "339.7362525"}, "castellana": {"nome": "Lillo Martino", "tel": "339.7362525"}, "mola": {"nome": "Lillo Martino", "tel": "339.7362525"}, "monopoli": {"nome": "Lillo Martino", "tel": "339.7362525"}, "bitonto": {"nome": "Malerba Francesco", "tel": "349.8820270"}, "modugno": {"nome": "Malerba Francesco", "tel": "349.8820270"}, "ruvo": {"nome": "Mastandrea Francesco", "tel": "389.6152515"}, "ruvo di puglia": {"nome": "Mastandrea Francesco", "tel": "389.6152515"}, "covan": {"nome": "Mundo Giovanni", "tel": "320.9508556"}, "covan2": {"nome": "Pezzolla Andrea", "tel": "389.1241306"}, "ostuni": {"nome": "Tunzi Nicola", "tel": "347.6075939"}, "barletta": {"nome": "Zinfollino Riccardo", "tel": "320.3154356"}, "castellaneta": {"nome": "Napolitano Gennaro", "tel": "348.0127910"}};
 
 function getTecnico(coop) {
   if (!coop || coop === 'nan' || coop === '—') return null;
@@ -489,13 +429,24 @@ function getTecniciOptions() {
     .map(l => `<option value="${l.value}">${l.label}</option>`)
     .join('');
 
-  // Tecnici dall'elenco
-  const src = Object.keys(tecniciData).length > 0 ? tecniciData : DEFAULT_TECNICI;
-  const unici = {};
-  Object.values(src).forEach(t => { unici[t.nome] = t.tel; });
-  const tecniciOptions = Object.entries(unici)
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([nome, tel]) => `<option value="${nome} · tel. ${tel}">${nome} · ${tel}</option>`)
+  // Lista tecnici completa e separata
+  const LISTA_TECNICI_COMPLETA = [
+    {nome: "Berardi Michele",       tel: "334.9908645"},
+    {nome: "Cicala Giovanni",       tel: "338.2170398"},
+    {nome: "De Lucia Nicolò",       tel: "340.9279827"},
+    {nome: "Falco Raffaele",        tel: "380.7934399"},
+    {nome: "Lanotte Andrea",        tel: "+39 348 845 9946"},
+    {nome: "Lillo Martino",         tel: "339.7362525"},
+    {nome: "Malerba Francesco",     tel: "349.8820270"},
+    {nome: "Mastandrea Francesco",  tel: "389.6152515"},
+    {nome: "Mundo Giovanni",        tel: "320.9508556"},
+    {nome: "Napolitano Gennaro",    tel: "348.0127910"},
+    {nome: "Pezzolla Andrea",       tel: "389.1241306"},
+    {nome: "Tunzi Nicola",          tel: "347.6075939"},
+    {nome: "Zinfollino Riccardo",   tel: "320.3154356"},
+  ];
+  const tecniciOptions = LISTA_TECNICI_COMPLETA
+    .map(t => `<option value="${t.nome} - tel. ${t.tel}">${t.nome} - ${t.tel}</option>`)
     .join('');
 
   return `<optgroup label="── Luoghi predefiniti ──">${luoghiOptions}</optgroup>
@@ -898,7 +849,7 @@ function switchMainTab(tab, el) {
   // Show/hide sections
   document.getElementById('tab-ordini-section').style.display = tab === 'ordini' ? 'block' : 'none';
   document.getElementById('tab-storico-section').style.display = tab === 'storico' ? 'block' : 'none';
-  document.getElementById('tab-settings-section').style.display = tab === 'settings' ? 'block' : 'none';
+  document.getElementById('tab-settings-wrapper').style.display = tab === 'settings' ? 'block' : 'none';
 
   if (tab === 'storico') loadStorico();
 }
@@ -1011,6 +962,70 @@ window.addEventListener('load', () => { loadStorico(); });
 </script>
 
 </div><!-- end tab-ordini-section -->
+
+<div class="container" id="tab-settings-wrapper" style="display:none">
+<!-- SETTINGS TAB -->
+  <div id="tab-settings-section" style="padding:16px 0">
+
+    <div style="font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:16px">Gestione Dati</div>
+
+    <!-- FORNITORI -->
+    <div class="file-block" style="margin-bottom:12px">
+      <div class="fb-title">Anagrafica Fornitori</div>
+      <div class="fb-status" id="anagraficaStatus2">95 fornitori predefiniti attivi</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn-upload" onclick="downloadTemplateFornitore()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+          Scarica Excel Fornitori
+        </button>
+        <button class="btn-upload" onclick="document.getElementById('anagraficaInput2').click()">
+          Carica aggiornamento
+        </button>
+      </div>
+      <input type="file" id="anagraficaInput2" accept=".xlsx,.xls" onchange="loadAnagrafica(this);document.getElementById('anagraficaStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('anagraficaStatus').textContent='Aggiornato: '+this.files[0].name;">
+    </div>
+
+    <!-- TECNICI -->
+    <div class="file-block" style="margin-bottom:12px">
+      <div class="fb-title">Elenco Tecnici</div>
+      <div class="fb-status" id="tecniciStatus2">12 tecnici predefiniti attivi</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn-upload" onclick="downloadTemplateTecnici()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+          Scarica Excel Tecnici
+        </button>
+        <button class="btn-upload" onclick="document.getElementById('tecniciInput2').click()">
+          Carica aggiornamento
+        </button>
+      </div>
+      <input type="file" id="tecniciInput2" accept=".xlsx,.xls" onchange="loadTecnici(this);document.getElementById('tecniciStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('tecniciStatus').textContent='Aggiornato: '+this.files[0].name;">
+    </div>
+
+    <!-- COOPERATIVE -->
+    <div class="file-block" style="margin-bottom:20px">
+      <div class="fb-title">Elenco Cooperative</div>
+      <div class="fb-status" id="coopStatus2">17 cooperative predefinite attive</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+        <button class="btn-upload" onclick="downloadTemplateCooperative()" style="background:var(--accent);color:#fff;border-color:var(--accent)">
+          Scarica Excel Cooperative
+        </button>
+        <button class="btn-upload" onclick="document.getElementById('coopInput2').click()">
+          Carica aggiornamento
+        </button>
+      </div>
+      <input type="file" id="coopInput2" accept=".xlsx,.xls" onchange="loadCooperative(this);document.getElementById('coopStatus2').textContent='Aggiornato: '+this.files[0].name;document.getElementById('coopStatus').textContent='Aggiornato: '+this.files[0].name;">
+    </div>
+
+    <!-- NOTE -->
+    <div style="background:#fffdf8;border:1px solid var(--border);border-radius:8px;padding:16px">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:500;margin-bottom:8px;color:var(--accent)">Come funziona</div>
+      <p style="font-size:14px;color:var(--muted);line-height:1.7">
+        1. Clicca <strong>Scarica Excel</strong> per scaricare i dati attuali.<br>
+        2. Apri il file, apporta le modifiche (nuovi fornitori, tecnici, ecc.).<br>
+        3. Clicca <strong>Carica aggiornamento</strong> per ricaricare il file aggiornato.<br>
+        Le modifiche sono attive subito per tutta la sessione.
+      </p>
+    </div>
+  </div>
+</div>
 
 <div id="tab-storico-section" style="display:none">
 <!-- SEZIONE STORICO -->
