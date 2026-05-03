@@ -5,29 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Assoproli Bari – Email Ordini OCM 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script>
-// Carica XLSX con fallback multipli
-(function() {
-  var srcs = [
-    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
-    'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
-    'https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js'
-  ];
-  var idx = 0;
-  function tryLoad() {
-    if (idx >= srcs.length) {
-      document.getElementById('xlsx-error').style.display = 'block';
-      return;
-    }
-    var s = document.createElement('script');
-    s.src = srcs[idx++];
-    s.onload = function() { console.log('XLSX caricato da', s.src); };
-    s.onerror = function() { tryLoad(); };
-    document.head.appendChild(s);
-  }
-  tryLoad();
-})();
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --bg: #f5f0e8; --surface: #fffdf8; --border: #d4c9b0;
@@ -202,9 +180,6 @@
 </script>
 
 
-<div id="xlsx-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;padding:12px 20px;font-family:monospace;font-size:12px;color:#dc2626;text-align:center">
-  Errore: impossibile caricare la libreria Excel. Verifica la connessione internet e ricarica la pagina.
-</div>
 <header>
   <div>
     <div class="logo">Assoproli Bari · Gestione Ordini</div>
